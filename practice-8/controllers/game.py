@@ -21,7 +21,7 @@ class Game:
             self.players[tank_index].decrease_life()
         for tank in self.players:
             for shot in self.shots:
-                if shot.cords.x == tank.coords.x and shot.coords.y == tank.coords.y:
+                if shot.coords.x == tank.coords.x and shot.coords.y == tank.coords.y:
                     tank.decrease_life()
         removed_players = []
         for tank_index in range(len(self.players)):
@@ -35,15 +35,19 @@ class Game:
     def play(self):
         current_shots = self.shots
         next_shots = []
-        for tank in self.players:
-            new_coords = self.field.move(coords=tank.coords, direction=tank.direction)
-            direction, shot = tank.next(origin=new_coords, targets=[], shots=current_shots)
-            tank.direction = direction
-            if shot != None and not tank.is_ammo_finished():
-                tank.decrease_ammo()
+        for tank_index in range(len(self.players)):
+            current_targets = []
+            for enemy_index in range(len(self.players)):
+                if enemy_index != tank_index:
+                    current_targets.append(self.players[enemy_index])
+            new_coords = self.field.move(coords=self.players[tank_index].coords, direction=self.players[tank_index].direction)
+            direction, shot = self.players[tank_index].next(origin=new_coords, targets=current_targets, shots=current_shots)
+            self.players[tank_index].direction = direction
+            if shot != None and not self.players[tank_index].is_ammo_finished():
+                self.players[tank_index].decrease_ammo()
                 next_shots.append(shot)
-            print(f"Tank <{tank.model}>: {direction, shot}")
-        map = self.field.show(tanks=self.players, shots=next_shots)
+            print(f"Tank <{self.players[tank_index].model}>: {direction, shot}")
+        map = self.field.show(tanks=self.players, shots=current_shots)
         for row in map:
             print(" ".join(row))
         self.shots = next_shots

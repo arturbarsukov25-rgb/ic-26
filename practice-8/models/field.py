@@ -42,8 +42,8 @@ class Field:
         for _ in range(self.size.height):
             row = ["·" for _ in range(self.size.width)]
             map.append(row)
-        for tank in tanks:
-            map[tank.coords.y - 1][tank.coords.x - 1] = tank.show()
+        for tank_index in range(len(tanks)):
+            map[tanks[tank_index].coords.y - 1][tanks[tank_index].coords.x - 1] = tanks[tank_index].show(point_character=str(tank_index + 1))
         for shot in shots:
             map[shot.coords.y - 1][shot.coords.x - 1] = shot.show()
         return map
