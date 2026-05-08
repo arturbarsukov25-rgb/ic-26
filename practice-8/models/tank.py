@@ -7,7 +7,7 @@ from models.shot import Shot
 
 
 class Tank:
-    model = "BaseModel"
+    model = "Базовая модель"
     def __init__(
         self,
         x: int,
@@ -47,7 +47,7 @@ class Tank:
 
 
     def show_stats(self):
-        print(f"> {self.model} (life: {self.life}, ammo: {self.ammo})")
+        print(f"> {self.model} (жизнь: {self.life}, снаряды: {self.ammo})")
 
     
     def next(self, origin: Coords, targets: List[Tuple[Coords, bool]], shots: List[Coords]) -> Tuple[Direction, Shot]:
@@ -65,7 +65,7 @@ class Tank:
 
 
 class FirstTank(Tank):
-    model = "FirstModel"
+    model = "Первая модель"
     def next(self, origin: Coords, targets: List[Tuple[Coords, bool]], shots: List[Coords]) -> Tuple[Direction, Shot]:
         return (self.direction, None)
     
@@ -75,7 +75,7 @@ class FirstTank(Tank):
 
 
 class SecondTank(Tank):
-    model = "SecondModel"
+    model = "Вторая модель"
     def next(self, origin: Coords, targets: List[Tuple[Coords, bool]], shots: List[Coords]) -> Tuple[Direction, Shot]:
         return (self.direction, None)
     
