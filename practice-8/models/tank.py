@@ -1,4 +1,6 @@
 from typing import List, Tuple
+from random import random
+from math import floor
 from utils.config import AMMO_COUNT, LIFE_COUNT
 from models.coords import Coords
 from models.size import Size
@@ -50,35 +52,41 @@ class Tank:
         print(f"> {self.model} (жизнь: {self.life}, снаряды: {self.ammo})")
 
     
-    def next(self, origin: Coords, targets: List[Tuple[Coords, bool]], shots: List[Coords]) -> Tuple[Direction, Shot]:
+    def next(self, origin: Coords, targets: List[Coords], shots: List[Coords]) -> Tuple[Direction, Shot]:
         """
         Return next step's decision
 
-        :param targets: List[Tuple[Coords, bool]] of target coordinates and shooting attribute
+        :param targets: List[Coords] list of target coordinates
         :return: Tuple[Direction, Shot]
         """
+        if not self.is_ammo_finished() and len(targets) > 0 and floor(2 * random()) == 0:
+            target_zone_size = 3
+            target_index = floor(len(targets) * random())
+            shot_x = floor(target_zone_size * random()) + 1
+            if shot_x > target_zone_size:
+                shot_x = target_zone_size
+            shot_y = floor(target_zone_size * random()) + 1
+            if shot_y > target_zone_size:
+                shot_y = target_zone_size
+            shot = Shot(
+                x=targets[target_index].coords.x - int((target_zone_size - 1) / 2) + shot_x,
+                y=targets[target_index].coords.y - int((target_zone_size - 1) / 2) + shot_y
+            )
+            return (self.direction, shot)
+        else:
+            d = floor(4 * random())
+            return (Direction(d), None)
+    
+
+    def show(self, point_character: str = "B") -> str:
+        return point_character
+
+
+class CustomTank(Tank):
+    model = "Кастомизированная модель"
+    def next(self, origin: Coords, targets: List[Coords], shots: List[Coords]) -> Tuple[Direction, Shot]:
         return (self.direction, None)
     
 
-    def show(self) -> str:
-        return "B"
-
-
-class FirstTank(Tank):
-    model = "Первая модель"
-    def next(self, origin: Coords, targets: List[Tuple[Coords, bool]], shots: List[Coords]) -> Tuple[Direction, Shot]:
-        return (self.direction, None)
-    
-
-    def show(self) -> str:
-        return "F"
-
-
-class SecondTank(Tank):
-    model = "Вторая модель"
-    def next(self, origin: Coords, targets: List[Tuple[Coords, bool]], shots: List[Coords]) -> Tuple[Direction, Shot]:
-        return (self.direction, None)
-    
-
-    def show(self) -> str:
-        return "S"
+    def show(self, point_character: str = "С") -> str:
+        return point_character

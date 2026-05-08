@@ -1,14 +1,14 @@
 from typing import List, Type
 from seeders.tank_factory import generate_tank
 from utils.config import FIELD_WIDTH, FIELD_HEIGHT, MAX_ROUND_COUNT
-from models.tank import Tank, FirstTank, SecondTank
+from models.tank import Tank, CustomTank
 from models.field import Field
 from controllers.game import Game
 
 
 APPROVED_TANK_MODELS = [
-    FirstTank,
-    SecondTank
+    Tank,
+    CustomTank
 ]
 
 
