@@ -43,11 +43,18 @@ def run():
     players = init_tanks(field=battle_field, tank_models=player_models)
     game = Game(field=battle_field, tanks=players)
     round_counter = 1
-    while(round_counter < MAX_ROUND_COUNT + 1 and game.is_finished()):
-        print(f"Round #{round_counter}")
+    print(">>>>>>> Игра началась! <<<<<<<\n\n")
+
+    while(round_counter <= MAX_ROUND_COUNT and not game.is_finished()):
+        print(f"\nRound #{round_counter}")
         game.play()
         round_counter += 1
-    print("Game over!")
+    
+    print("\n>>>>>>> Игра завершена! <<<<<<<")
+    print("\n------- Результаты! -------\n")
+    for p in players:
+        p.show_stats()
+    print("\n---------------------------\n")
 
 
 if __name__ == "__main__":
