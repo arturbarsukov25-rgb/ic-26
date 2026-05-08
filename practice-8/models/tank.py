@@ -45,6 +45,10 @@ class Tank:
         if not self.is_life_finished():
             self.life -= 1
 
+
+    def show_stats(self):
+        print(f"> {self.model} (life: {self.life}, ammo: {self.ammo})")
+
     
     def next(self, origin: Coords, targets: List[Tuple[Coords, bool]], shots: List[Coords]) -> Tuple[Direction, Shot]:
         """
