@@ -6,5 +6,5 @@ class Shot():
         self.coords = Coords(x=x, y=y)
     
 
-    def show(self):
-        print("⏺")
+    def show(self) -> str:
+        return "⏺"

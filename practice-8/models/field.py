@@ -45,9 +45,19 @@ class Field:
         for tank_index in range(len(tanks)):
             map[tanks[tank_index].coords.y - 1][tanks[tank_index].coords.x - 1] = tanks[tank_index].show(point_character=str(tank_index + 1))
         for shot in shots:
-            map[shot.coords.y - 1][shot.coords.x - 1] = shot.show()
+            if shot != None:
+                map[shot.coords.y - 1][shot.coords.x - 1] = shot.show()
         return map
         
+    
+    def check_out_of_field(self, coords: Coords) -> bool:
+        if coords.x < 1 or coords.x > self.size.width:
+            return False
+        elif coords.y < 1 or coords.y > self.size.height:
+            return False
+        else:
+            return True
+
 
     def get_random_player_params(self) -> Tuple[Coords, Direction]:
         x = floor(self.size.width * random()) + 1
@@ -56,14 +66,5 @@ class Field:
         y = floor(self.size.height * random()) + 1
         if y > self.size.height:
             y = self.size.height
-        raw_d = floor(4 * random())
-        d = Direction.Stop
-        if raw_d == 1:
-            d = Direction.Up
-        elif raw_d == 2:
-            d = Direction.Right
-        elif raw_d == 3:
-            d = Direction.Down
-        elif raw_d == 4:
-            d = Direction.Left
-        return (Coords(x=x, y=y), d)
+        d = floor(4 * random())
+        return (Coords(x=x, y=y), Direction(d))

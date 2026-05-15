@@ -1,7 +1,10 @@
+from copy import deepcopy
 from enum import Enum
 from time import sleep
 from sys import stdout
 from typing import List
+from models.shot import Shot
+from models.direction import Direction
 from models.tank import Tank
 from models.field import Field
 
@@ -22,7 +25,7 @@ class Game:
 
 
     def is_finished(self, round: int = 1) -> bool:
-        if round > MAX_ROUND_COUNT:
+        if MAX_ROUND_COUNT > 0 and round > MAX_ROUND_COUNT:
             return True
         target_players = []
         for tank_index in range(len(self.players)):
@@ -60,17 +63,34 @@ class Game:
             new_coords = self.field.move(coords=self.players[tank_index].coords, direction=self.players[tank_index].direction)
             direction, shot = self.players[tank_index].next(origin=new_coords, targets=current_targets, shots=current_shots)
             self.players[tank_index].direction = direction
-            if shot != None and not self.players[tank_index].is_ammo_finished():
+            if shot and not self.players[tank_index].is_ammo_finished():
                 self.players[tank_index].decrease_ammo()
                 next_shots.append(shot)
-            self.write_into_console(output=f"Tank <{self.players[tank_index].model}>: {direction.value, ('No' if shot == None else 'Yes')}\n")
+            self.write_into_console(output=f"Tank <{self.players[tank_index].model}>: {self.prepare_direction_output(direction=direction)}, {self.prepare_shot_output(shot)}, Жизнь={self.players[tank_index].life}, Снаряды={self.players[tank_index].ammo}\n")
         map = self.field.show(tanks=self.players, shots=current_shots)
         for row in map:
             self.write_into_console(output=" ".join(row) + '\n')
-        self.shots = next_shots
+        self.shots = deepcopy(next_shots)
         self.output_string_counter = players_counter + len(map) + 1
         sleep(1)
 
 
     def write_into_console(self, output: str, default_prefix: str = ""):
         stdout.write(f"{ANSI_Escape_Codes.ERASE_FOLLOWING_STRING.value if self.output_string_counter > 0 else default_prefix}{output}")
+
+    
+    def prepare_shot_output(self, shot: Shot) -> str:
+        return 'Не стреляет' if shot == None else 'Стреляет'
+
+
+    def prepare_direction_output(self, direction: Direction) -> str:
+        if direction == Direction.Stop:
+            return "Остановился"
+        elif direction == Direction.Up:
+            return "Едет вверх"
+        elif direction == Direction.Right:
+            return "Едет вправо"
+        elif direction == Direction.Down:
+            return "Едет вниз"
+        elif direction == Direction.Left:
+            return "Едет влево"

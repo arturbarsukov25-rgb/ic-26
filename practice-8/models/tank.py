@@ -1,7 +1,7 @@
 from typing import List, Tuple
 from random import random
 from math import floor
-from utils.config import AMMO_COUNT, LIFE_COUNT
+from utils.config import AMMO_COUNT, LIFE_COUNT, FIELD_WIDTH, FIELD_HEIGHT
 from models.coords import Coords
 from models.size import Size
 from models.direction import Direction
@@ -62,16 +62,15 @@ class Tank:
         if not self.is_ammo_finished() and len(targets) > 0 and floor(2 * random()) == 0:
             target_zone_size = 3
             target_index = floor(len(targets) * random())
-            shot_x = floor(target_zone_size * random()) + 1
-            if shot_x > target_zone_size:
-                shot_x = target_zone_size
-            shot_y = floor(target_zone_size * random()) + 1
-            if shot_y > target_zone_size:
-                shot_y = target_zone_size
-            shot = Shot(
-                x=targets[target_index].coords.x - int((target_zone_size - 1) / 2) + shot_x,
-                y=targets[target_index].coords.y - int((target_zone_size - 1) / 2) + shot_y
-            )
+            raw_shot_x = floor(target_zone_size * random()) + 1
+            if raw_shot_x > target_zone_size:
+                raw_shot_x = target_zone_size
+            raw_shot_y = floor(target_zone_size * random()) + 1
+            if raw_shot_y > target_zone_size:
+                raw_shot_y = target_zone_size
+            shot_x = targets[target_index].coords.x - int((target_zone_size - 1) / 2) + raw_shot_x
+            shot_y = targets[target_index].coords.y - int((target_zone_size - 1) / 2) + raw_shot_y
+            shot = Shot(x=shot_x, y=shot_y) if shot_x > 0 and shot_x <= FIELD_WIDTH and shot_y > 0 and shot_y <= FIELD_HEIGHT else None
             return (self.direction, shot)
         else:
             d = floor(4 * random())
