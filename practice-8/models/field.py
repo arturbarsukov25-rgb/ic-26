@@ -56,5 +56,14 @@ class Field:
         y = floor(self.size.height * random()) + 1
         if y > self.size.height:
             y = self.size.height
-        d = floor(4 * random())
-        return (Coords(x=x, y=y), Direction(d))
+        raw_d = floor(4 * random())
+        d = Direction.Stop
+        if raw_d == 1:
+            d = Direction.Up
+        elif raw_d == 2:
+            d = Direction.Right
+        elif raw_d == 3:
+            d = Direction.Down
+        elif raw_d == 4:
+            d = Direction.Left
+        return (Coords(x=x, y=y), d)

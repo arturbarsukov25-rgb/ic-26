@@ -1,6 +1,16 @@
+from enum import Enum
+from time import sleep
+from sys import stdout
 from typing import List
 from models.tank import Tank
 from models.field import Field
+
+from utils.config import MAX_ROUND_COUNT
+
+
+class ANSI_Escape_Codes(Enum):
+    UP_FOR_ONE_LINE = "\033[F"
+    ERASE_FOLLOWING_STRING = "\033[K"
 
 
 class Game:
@@ -8,9 +18,12 @@ class Game:
         self.field = field
         self.players = tanks
         self.shots = []
+        self.output_string_counter = 0
 
 
-    def is_finished(self) -> bool:
+    def is_finished(self, round: int = 1) -> bool:
+        if round > MAX_ROUND_COUNT:
+            return True
         target_players = []
         for tank_index in range(len(self.players)):
             other_tanks = self.players[:tank_index] + self.players[tank_index + 1:]
@@ -29,15 +42,19 @@ class Game:
                 removed_players.append(tank_index)
         for tank_index in range(len(target_players) - 1, 0, -1):
             self.players.pop(tank_index)
+        if self.output_string_counter > 0:
+            stdout.write("".join([ANSI_Escape_Codes.UP_FOR_ONE_LINE.value for _ in range(self.output_string_counter)]))
         return len(self.players) < 2
     
 
-    def play(self):
+    def play(self, round: int = 1):
         current_shots = self.shots
         next_shots = []
-        for tank_index in range(len(self.players)):
+        self.write_into_console(output=f"Round #{round}\n", default_prefix="\n")
+        players_counter = len(self.players)
+        for tank_index in range(players_counter):
             current_targets = []
-            for enemy_index in range(len(self.players)):
+            for enemy_index in range(players_counter):
                 if enemy_index != tank_index:
                     current_targets.append(self.players[enemy_index])
             new_coords = self.field.move(coords=self.players[tank_index].coords, direction=self.players[tank_index].direction)
@@ -46,8 +63,14 @@ class Game:
             if shot != None and not self.players[tank_index].is_ammo_finished():
                 self.players[tank_index].decrease_ammo()
                 next_shots.append(shot)
-            print(f"Tank <{self.players[tank_index].model}>: {direction, shot}")
+            self.write_into_console(output=f"Tank <{self.players[tank_index].model}>: {direction.value, ('No' if shot == None else 'Yes')}\n")
         map = self.field.show(tanks=self.players, shots=current_shots)
         for row in map:
-            print(" ".join(row))
+            self.write_into_console(output=" ".join(row) + '\n')
         self.shots = next_shots
+        self.output_string_counter = players_counter + len(map) + 1
+        sleep(1)
+
+
+    def write_into_console(self, output: str, default_prefix: str = ""):
+        stdout.write(f"{ANSI_Escape_Codes.ERASE_FOLLOWING_STRING.value if self.output_string_counter > 0 else default_prefix}{output}")

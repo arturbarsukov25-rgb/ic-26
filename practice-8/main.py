@@ -45,9 +45,8 @@ def run():
     round_counter = 1
     print(">>>>>>> Игра началась! <<<<<<<\n\n")
 
-    while(round_counter <= MAX_ROUND_COUNT and not game.is_finished()):
-        print(f"\nRound #{round_counter}")
-        game.play()
+    while(not game.is_finished(round=round_counter)):
+        game.play(round=round_counter)
         round_counter += 1
     
     print("\n>>>>>>> Игра завершена! <<<<<<<")
