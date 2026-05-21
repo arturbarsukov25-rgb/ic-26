@@ -81,11 +81,47 @@ class Tank:
         return point_character
 
 
-class CustomTank(Tank):
-    model = "Кастомизированная модель"
-    def next(self, origin: Coords, targets: List[Coords], shots: List[Coords]) -> Tuple[Direction, Shot]:
-        return (self.direction, None)
-    
+class RamTank(Tank):
+    model = "Таран"
 
-    def show(self, point_character: str = "С") -> str:
+    def __init__(self, x, y, direction, map_width, map_height):
+        Tank.__init__(self, x, y, direction, map_width, map_height,
+                      ammo_count=4, life_count=8)
+
+    def is_life_finished(self):
+        return self.life <= 0
+
+    def is_ammo_finished(self):
+        return self.ammo <= 0
+
+    def _dist(self, a, b):
+        return abs(a.x - b.x) + abs(a.y - b.y)
+
+    def next(self, origin, targets, shots):
+        if not targets:
+            return (Direction.Stop, None)
+
+        # Находим ближайшего врага
+        nearest = targets[0]
+        min_d = self._dist(origin, nearest.coords)
+        for t in targets[1:]:
+            d = self._dist(origin, t.coords)
+            if d < min_d:
+                min_d = d
+                nearest = t
+
+        # Если есть патроны и враг близко (≤2) — стреляем
+        if not self.is_ammo_finished() and min_d <= 2:
+            return (self.direction, Shot(x=nearest.coords.x, y=nearest.coords.y))
+
+        # Если патронов нет или враг далеко — идём на сближение
+        dx = nearest.coords.x - origin.x
+        dy = nearest.coords.y - origin.y
+        if abs(dx) >= abs(dy):
+            new_dir = Direction.Right if dx > 0 else Direction.Left
+        else:
+            new_dir = Direction.Down if dy > 0 else Direction.Up
+        return (new_dir, None)
+
+    def show(self, point_character="R"):
         return point_character
