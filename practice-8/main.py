@@ -34,8 +34,8 @@ def select_player_models() -> List[Type[Tank]]:
 
 def init_tanks(field: Field, tank_models: List[Type[Tank]]) -> List[Tank]:
     tanks = []
-    for tank_class in tank_models:
-        tanks.append(generate_tank(model_class=tank_class, field=field))
+    for tank_class_index in range(len(tank_models)):
+        tanks.append(generate_tank(model_class=tank_models[tank_class_index], field=field, player_index=tank_class_index + 1))
     return tanks
 
 

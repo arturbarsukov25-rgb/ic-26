@@ -66,7 +66,7 @@ class Game:
             if shot and not self.players[tank_index].is_ammo_finished():
                 self.players[tank_index].decrease_ammo()
                 next_shots.append(shot)
-            self.write_into_console(output=f"Tank <{self.players[tank_index].model}>: {self.prepare_direction_output(direction=direction)}, {self.prepare_shot_output(shot)}, Жизнь={self.players[tank_index].life}, Снаряды={self.players[tank_index].ammo}\n")
+            self.write_into_console(output=f"Tank <{self.players[tank_index].get_player_info()}> ({tank_index + 1}): {self.prepare_direction_output(direction=direction)}, {self.prepare_shot_output(shot)}, Жизнь={self.players[tank_index].life}, Снаряды={self.players[tank_index].ammo}\n")
         map = self.field.show(tanks=self.players, shots=current_shots)
         for row in map:
             self.write_into_console(output=" ".join(row) + '\n')

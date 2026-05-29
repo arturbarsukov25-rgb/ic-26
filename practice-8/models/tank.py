@@ -17,6 +17,7 @@ class Tank:
         direction: Direction,
         map_width: int,
         map_height: int,
+        player_index: int,
         ammo_count: int = AMMO_COUNT,
         life_count: int = LIFE_COUNT,
         gun_angle: float = 0
@@ -24,11 +25,16 @@ class Tank:
         self.coords = Coords(x=x, y=y)
         self.direction = direction
         self.map = Size(width=map_width, height=map_height)
+        self.player_index = player_index
         self.ammo = ammo_count
         self.life = life_count
         self.angle = gun_angle
         self.targets = {}
     
+
+    def get_player_info(self):
+        return f"{self.model}#{self.player_index}"
+
 
     def is_ammo_finished(self):
         return self.ammo <= 0
